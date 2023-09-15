@@ -1,0 +1,16 @@
+{
+    "name": "UnistySimpleContainer.Sample",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b17787749f194014cb060df6a174aa09"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

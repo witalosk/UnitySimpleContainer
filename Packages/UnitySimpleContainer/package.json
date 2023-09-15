@@ -1,0 +1,25 @@
+﻿{
+  "name": "com.witalosk.unity-simple-container",
+  "displayName": "Unity Simple Container",
+  "version": "1.0.0",
+  "unity": "2021.1",
+  "description": "Simple container for Unity",
+  "author": {
+    "name": "witalosk",
+    "url": "https://github.com/witalosk"
+  },
+  "keywords": [
+    "Di Container",
+    "Component",
+    "Container"
+  ],
+  "dependencies": {
+  },
+  "samples": [
+    {
+      "displayName": "Basic Sample",
+      "description": "Basic sample for Simple Unity Container",
+      "path": "./Samples/BasicSample"
+    }
+  ]
+}
