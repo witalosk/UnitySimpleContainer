@@ -1,6 +1,6 @@
 {
     "name": "UnitySimpleContainer",
-    "rootNamespace": "UnitySimpleContainer",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
