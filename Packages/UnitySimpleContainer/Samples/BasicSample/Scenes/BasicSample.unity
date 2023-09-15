@@ -685,6 +685,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6951572866807839602, guid: 294647d664c060f4c9f98dd44f5e4e82, type: 3}
+      propertyPath: _projectContainerPrefabName
+      value: SampleProjectContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 6951572866807839602, guid: 294647d664c060f4c9f98dd44f5e4e82, type: 3}
       propertyPath: _manualBinders.Array.data[0]
       value: 
       objectReference: {fileID: 68641492}

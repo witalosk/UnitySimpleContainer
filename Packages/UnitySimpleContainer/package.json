@@ -1,7 +1,7 @@
 ﻿{
   "name": "com.witalosk.unity-simple-container",
   "displayName": "Unity Simple Container",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2021.1",
   "description": "Simple container for Unity",
   "author": {
