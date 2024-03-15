@@ -1,14 +1,32 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace UnitySimpleContainer
 {
     public static class ContainerExtension
     {
         /// <summary>
-        /// Prefabをインスタンス化してコンテナに登録、Injectする
+        /// Resolve and add component to GameObject
+        /// Works only if registered as MonoBehaviour with TransientInstanceProvider.
         /// </summary>
-        /// <param name="container">コンテナ</param>
-        /// <param name="prefab">インスタンス化するPrefab</param>
+        public static Component ResolveAndAddComponent<T>(this IContainer container, GameObject gameObject)
+        {
+            var provider = container.ResolveProvider(typeof(T));
+            
+            if (provider is TransientInstanceProvider { IsMonoBehaviour: true } transientProvider)
+            {
+                return transientProvider.AddComponent(gameObject);
+            }
+            
+            throw new InvalidOperationException("This type is not a MonoBehaviour");
+        }
+
+        /// <summary>
+        /// Instantiate Prefab, register to container, Inject
+        /// </summary>
+        /// <param name="container">Container</param>
+        /// <param name="prefab">Target prefab to instantiate</param>
         public static T Instantiate<T>(this IContainer container, T prefab)
             where T : Object
         {
@@ -27,14 +45,12 @@ namespace UnitySimpleContainer
         }
         
         /// <summary>
-        /// prefabをインスタンス化してコンテナに登録、Injectする
+        /// Instantiate Prefab, register to container, Inject
         /// </summary>
-        /// <param name="container">コンテナ</param>
-        /// <param name="prefab">インスタンス化するPrefab</param>
-        /// <param name="parent">親Transform</param>
-        /// <param name="worldPositionStays">親Objectを割り当てるとき、新しいObjectをワールド空間に直接配置するときはtrue。falseを渡すと、Objectの位置が新しい親から相対的に設定される。</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <param name="container">Container</param>
+        /// <param name="prefab">Target prefab to instantiate</param>
+        /// <param name="parent">Parent Transform</param>
+        /// <param name="worldPositionStays">When assigning a parentObject, true if the new Object is placed directly in world space; passing false sets the Object's position relative to its new parent.</param>
         public static T Instantiate<T>(this IContainer container, T prefab, Transform parent, bool worldPositionStays = false)
             where T : Object
         {
@@ -53,8 +69,8 @@ namespace UnitySimpleContainer
         }
         
         /// <summary>
-        /// 対象のGameObjectにコンポーネントがあればInjectする
-        /// (再帰的に実行される)
+        /// If the target GameObject has a component, inject it.
+        /// (executed recursively)
         /// </summary>
         public static void InjectToGameObject(this IContainer container, GameObject gameObject)
         {

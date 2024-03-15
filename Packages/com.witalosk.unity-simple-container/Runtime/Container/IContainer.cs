@@ -5,17 +5,27 @@ namespace UnitySimpleContainer
     public interface IBindOnlyContainer
     {
         /// <summary>
-        /// 既に存在するインスタンスを登録する
+        /// Register a type as transient (new instance every time)
+        /// </summary>
+        public void BindAsTransient<TRegister, TConcrete>();
+        
+        /// <summary>
+        /// Register a type as transient (new instance every time)
+        /// </summary>
+        public void BindAsTransient(Type registerType, Type concreteType);
+        
+        /// <summary>
+        /// Register an instance that already exists
         /// </summary>
         public void BindInstance<T>(object obj);
 
         /// <summary>
-        /// 既に存在するインスタンスを登録する
+        /// Register an instance that already exists
         /// </summary>
         public void BindInstance(Type registerType, object obj);
 
         /// <summary>
-        /// InstanceProviderを登録する
+        /// Register InstanceProvider
         /// </summary>
         public void BindProvider(Type type, IInstanceProvider provider);
     }
@@ -41,6 +51,11 @@ namespace UnitySimpleContainer
         /// コンテナから対応する型のインスタンスを取得する
         /// </summary>
         public object Resolve(Type type, bool nullable = false);
+
+        /// <summary>
+        /// プロバイダを解決する
+        /// </summary>
+        public IInstanceProvider ResolveProvider(Type type);
 
         /// <summary>
         /// オブジェクトにこのコンテナに登録されているインスタンスを注入する
