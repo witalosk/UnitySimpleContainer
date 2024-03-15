@@ -21,6 +21,16 @@ namespace UnitySimpleContainer.Sample
     {
         Texture Texture { get; }
     }
+    
+    public interface ILogger
+    {
+        void Log(string message);
+    }
+    
+    public interface ISomeComponent
+    {
+        void DoSomething();
+    }
 
     public interface ICommonSettingProvider
     {

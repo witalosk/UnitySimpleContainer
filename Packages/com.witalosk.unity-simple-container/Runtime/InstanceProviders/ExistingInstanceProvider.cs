@@ -1,7 +1,7 @@
 namespace UnitySimpleContainer
 {
     /// <summary>
-    /// 既に存在するインスタンスを提供する
+    /// Provide instances that already exist
     /// </summary>
     public class ExistingInstanceProvider : IInstanceProvider
     {

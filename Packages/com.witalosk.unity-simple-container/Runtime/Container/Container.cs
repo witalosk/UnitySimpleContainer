@@ -71,10 +71,34 @@ namespace UnitySimpleContainer
             if (!nullable)
             {
                 // [Nullable]属性が付いていない場合は警告を出力する
-                Debug.LogAssertion($"\"{type}\" が要求されましたが、コンテナに対応する型の登録がありません。");
+                Debug.LogAssertion($"\"{type}\" was requested, but there is no corresponding type registered for the container.");
             }
 
             return GetDefault(type);
+        }
+        
+        /// <summary>
+        /// プロバイダを解決する
+        /// </summary>
+        /// <exception cref="InvalidOperationException">IEnumerable&lt;&gt;型のプロバイダは取得できない</exception>
+        public IInstanceProvider ResolveProvider(Type type)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            {
+                throw new InvalidOperationException("Providers of type IEnumerable<> cannot be obtained.");
+            }
+            
+            if (_containerData.TryGetValue(type, out IInstanceProvider value))
+            {
+                return value;
+            }
+
+            if (Parent is not null)
+            {
+                return Parent.ResolveProvider(type);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -86,6 +110,22 @@ namespace UnitySimpleContainer
             Injector.Inject(instance, this);
         }
 
+        /// <summary>
+        /// Register a type as transient (new instance every time)
+        /// </summary>
+        public void BindAsTransient<TRegister, TConcrete>()
+        {
+            BindAsTransient(typeof(TRegister), typeof(TConcrete));
+        }
+
+        /// <summary>
+        /// Register a type as transient (new instance every time)
+        /// </summary>
+        public void BindAsTransient(Type registerType, Type concreteType)
+        {
+            BindProvider(registerType, new TransientInstanceProvider(concreteType));
+        }
+        
         /// <summary>
         /// 既に存在するインスタンスを登録する
         /// </summary>
@@ -109,7 +149,7 @@ namespace UnitySimpleContainer
         {
             if (typeof(IEnumerable).IsAssignableFrom(type))
             {
-                Debug.LogAssertion($"リスト型のオブジェクトは登録できません。 適当なクラスでラップしてから登録してください。 (Type: {type}) {provider.GetInstance()}");
+                Debug.LogAssertion($"List-type objects cannot be registered. Wrap the object in an appropriate class before registering it. (Type: {type}) {provider.GetInstance()}");
             }
             
             Type collectionType = typeof(IEnumerable<>).MakeGenericType(type);

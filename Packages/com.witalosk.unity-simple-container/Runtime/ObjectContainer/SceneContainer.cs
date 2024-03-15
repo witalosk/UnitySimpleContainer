@@ -78,20 +78,23 @@ namespace UnitySimpleContainer
     #if UNITY_EDITOR
     
     /// <summary>
-    /// delayCall時にSceneContainerを探してBindAndInjectToSceneObjectsを呼ぶ
+    /// EditMode開始時にSceneContainerを探してBindAndInjectToSceneObjectsを呼ぶ
     /// </summary>
     [InitializeOnLoad]
     public static class EditorContainerUtility
     {
         static EditorContainerUtility()
         {
-            EditorApplication.delayCall += () =>
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+        
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state != PlayModeStateChange.EnteredEditMode) return;
+            foreach (var sceneContainer in UnityEngine.Object.FindObjectsOfType<SceneContainer>())
             {
-                foreach (var sceneContainer in UnityEngine.Object.FindObjectsOfType<SceneContainer>())
-                {
-                    sceneContainer.BindAndInjectToSceneObjects();
-                }
-            };
+                sceneContainer.BindAndInjectToSceneObjects();
+            }
         }
 
         public static void BindAndInjectToSceneObjects()

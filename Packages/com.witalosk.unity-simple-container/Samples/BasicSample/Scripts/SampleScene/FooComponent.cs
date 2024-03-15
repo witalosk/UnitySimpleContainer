@@ -11,15 +11,17 @@ namespace UnitySimpleContainer.Sample
         private INumberProvider _numberProvider;
         private IEnumerable<IStringProvider> _stringProviders;
         private ITextureProvider _textureProvider;
+        private ILogger _logger;
         private IContainer _container;
         
         [Inject]
         public void Construct(INumberProvider numberProvider, IEnumerable<IStringProvider> stringProviders,
-            [Nullable] ITextureProvider textureProvider, IContainer container)
+            [Nullable] ITextureProvider textureProvider, ILogger logger, IContainer container)
         {
             _numberProvider = numberProvider;
             _stringProviders = stringProviders;
             _textureProvider = textureProvider;
+            _logger = logger;
             _container = container;
         }
     
@@ -43,6 +45,15 @@ namespace UnitySimpleContainer.Sample
             // The new string provider is registered to the container and injected.
             var newProvider = _container.Instantiate(_barComponentPrefab, transform);
             newProvider.name = "Added String Provider";
+            
+            // Logger is bound by Transient in SampleManualBinder, so a new instance is created each time it is Injected/Resolved.
+            _logger.Log($"Logger, Hash: {_logger.GetHashCode()}");
+            var logger2 = _container.Resolve<ILogger>();
+            _logger.Log($"Logger2 Hash: {logger2.GetHashCode()}");
+            
+            // Resolve and add component to GameObject
+            // Works only if registered as MonoBehaviour with TransientInstanceProvider.
+            _container.ResolveAndAddComponent<ISomeComponent>(gameObject);
         }
     }
 }

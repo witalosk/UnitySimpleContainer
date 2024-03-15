@@ -10,6 +10,8 @@ namespace UnitySimpleContainer.Sample
         public override void BindObjects(IBindOnlyContainer bindOnlyContainer)
         {
             bindOnlyContainer.BindInstance<IStringProvider>(new PureStringProvider());
+            bindOnlyContainer.BindAsTransient<ISomeComponent, SomeComponent>();
+            bindOnlyContainer.BindAsTransient<ILogger, SimpleLogger>();
         }
     }
 }
