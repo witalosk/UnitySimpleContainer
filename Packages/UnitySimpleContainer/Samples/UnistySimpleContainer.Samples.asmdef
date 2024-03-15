@@ -2,7 +2,8 @@
     "name": "UnistySimpleContainer.Sample",
     "rootNamespace": "",
     "references": [
-        "GUID:b17787749f194014cb060df6a174aa09"
+        "GUID:b17787749f194014cb060df6a174aa09",
+        "UnitySimpleContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
