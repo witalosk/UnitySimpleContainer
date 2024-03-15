@@ -13,6 +13,7 @@ A simple dependency injection container for Unity3D.
 2. Click the + button
 3. Select "Add package from git URL..."
 4. Enter `https://github.com/witalosk/UnitySimpleContainer.git?path=Packages/com.witalosk.unity-simple-container`
+   5. **[Caution]** The URL (above) is changed from v1.1.0. If you are using v1.0.0, please change the URL!!
 
 ## Usage
 1. Create a `SceneContainer` in the scene.

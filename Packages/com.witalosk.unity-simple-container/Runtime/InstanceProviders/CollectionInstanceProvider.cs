@@ -4,29 +4,6 @@ using System.Collections.Generic;
 
 namespace UnitySimpleContainer
 {
-    public interface IInstanceProvider
-    {
-        object GetInstance();
-    }
-    
-    /// <summary>
-    /// 既に存在するインスタンスを提供する
-    /// </summary>
-    public class ExistingInstanceProvider : IInstanceProvider
-    {
-        private readonly object _instance;
-        
-        public ExistingInstanceProvider(object instance)
-        {
-            _instance = instance;
-        }
-        
-        public object GetInstance()
-        {
-            return _instance;
-        }
-    }
-    
     /// <summary>
     /// 複数のインスタンスを保持して提供する
     /// </summary>
