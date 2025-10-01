@@ -136,7 +136,7 @@
       "url": "https://packages.unity.com"
     },
     "com.witalosk.unity-simple-container": {
-      "version": "file:com.witalosk.unity-simple-container",
+      "version": "file:UnitySimpleContainer",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
