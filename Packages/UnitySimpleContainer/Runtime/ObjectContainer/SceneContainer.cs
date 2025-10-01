@@ -19,7 +19,7 @@ namespace UnitySimpleContainer
     {
         [SerializeField]
         private string _projectContainerPrefabName = "ProjectContainer";
-        
+
         [SerializeField]
         private bool _isIncludeInactive = true;
 
@@ -37,7 +37,7 @@ namespace UnitySimpleContainer
                     {
                         throw new NullReferenceException("ProjectContainerが見つかりませんでした. ProjectContainerのPrefabをResources以下に作成してください。");
                     }
-                    
+
                     var pcObj = Instantiate(prefab);
                     pcObj.name = _projectContainerPrefabName;
                     projectContainer = pcObj.GetComponent<ProjectContainer>();
@@ -56,9 +56,9 @@ namespace UnitySimpleContainer
         {
             // コンテナをリセットする
             Container.Clear();
-            
+
             BindManualBinders();
-            
+
             // シーンにあるComponentを全て取得
             string scenePath = gameObject.scene.path;
             List<Component> targetComponents = FindObjectsOfType<Component>(_isIncludeInactive).Where(c => c.gameObject.scene.path == scenePath).ToList();
@@ -68,15 +68,30 @@ namespace UnitySimpleContainer
             BindComponents(targetComponents);
 
             // 登録されたComponentに対してInjectを行う
+            string prevGameObjectName = "";
             foreach (var component in targetComponents)
             {
-                Container.Inject(component);
+                if (component == null)
+                {
+                    Debug.LogWarning($"[SceneContainer] A null component was detected and ignored. (around {prevGameObjectName})");
+                    continue;
+                }
+
+                try
+                {
+                    Container.Inject(component);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[SceneContainer] Injection failed. (around {component.gameObject.name})\n{e}");
+                }
+                prevGameObjectName = component.gameObject.name;
             }
         }
     }
-    
+
     #if UNITY_EDITOR
-    
+
     /// <summary>
     /// EditMode開始時にSceneContainerを探してBindAndInjectToSceneObjectsを呼ぶ
     /// </summary>
@@ -87,7 +102,7 @@ namespace UnitySimpleContainer
         {
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
-        
+
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
             if (state != PlayModeStateChange.EnteredEditMode) return;
@@ -110,7 +125,7 @@ namespace UnitySimpleContainer
     public class SceneContainerEditor : Editor
     {
         private SceneContainer _sceneContainer;
-        
+
         public void OnEnable()
         {
             _sceneContainer = target as SceneContainer;
@@ -121,7 +136,7 @@ namespace UnitySimpleContainer
             base.OnInspectorGUI();
 
             GUILayout.Space(10f);
-            
+
             if (GUILayout.Button("Bind and Inject Manually"))
             {
                 _sceneContainer.BindAndInjectToSceneObjects();
