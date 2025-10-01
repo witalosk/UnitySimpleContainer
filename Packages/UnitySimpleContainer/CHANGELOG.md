@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## [1.1.1] - 2025-10-01
+- Added some error handling and logging for better debugging. (Mainly Injection failures)
+
 ## [1.1.0] - 2024-03-15
 ### Change the directory structure.
 - The URL for installation in the Package Manager will change accordingly.
