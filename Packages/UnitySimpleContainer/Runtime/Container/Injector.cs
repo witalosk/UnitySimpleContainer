@@ -1,40 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace UnitySimpleContainer
 {
     public static class Injector
     {
-        public sealed class TargetMethodInfo
-        {
-            public readonly MethodInfo MethodInfo;
-            public readonly ParameterInfo[] ParameterInfos;
-
-            public TargetMethodInfo(MethodInfo methodInfo)
-            {
-                MethodInfo = methodInfo;
-                ParameterInfos = methodInfo.GetParameters();
-            }
-        }
-
         /// <summary>
         /// [Inject]が付いたメソッドを持つオブジェクトに大して、コンテナから適切な型を取得し、メソッドを実行する
         /// </summary>
         public static void Inject(object instance, IContainer container)
         {
-            // オブジェクトの中の[Inject]が付いたメソッドを探す
-            var targets = new List<TargetMethodInfo>();
-            foreach (var methodInfo in instance.GetType().GetRuntimeMethods())
-            {
-                if (methodInfo.IsDefined(typeof(InjectAttribute), true))
-                {
-                    targets.Add(new TargetMethodInfo(methodInfo));
-                }
-            }
+            // オブジェクトの中の[Inject]が付いたメソッドを探す(型ごとにキャッシュされる)
+            var targets = ReflectionCache.GetInjectMethods(instance.GetType());
 
-            if (targets is not { Count: > 0 }) return;
+            if (targets.Length == 0) return;
 
             // [Inject]が付いたメソッドの引数にオブジェクトを設定し、メソッドを実行する
             foreach (var methodInfo in targets)
@@ -50,10 +28,10 @@ namespace UnitySimpleContainer
                     var targetParameter = parameters[i];
 
 #if UNITY_EDITOR
-                    bool nullable = targetParameter.IsDefined(typeof(NullableAttribute), true)
-                        || (!UnityEditor.EditorApplication.isPlaying && targetParameter.IsDefined(typeof(RuntimeOnlyAttribute), true));
+                    bool nullable = targetParameter.HasNullableAttribute
+                        || (!UnityEditor.EditorApplication.isPlaying && targetParameter.HasRuntimeOnlyAttribute);
 #else
-                    bool nullable = targetParameter.IsDefined(typeof(NullableAttribute), true);
+                    bool nullable = targetParameter.HasNullableAttribute;
 #endif
 
                     // コンテナからインスタンスを取得する
@@ -71,7 +49,7 @@ namespace UnitySimpleContainer
                 // メソッドを実行する
                 if (methodExecutable)
                 {
-                    methodInfo.MethodInfo.Invoke(instance, values);
+                    methodInfo.Invoke(instance, values);
                 }
                 else
                 {
