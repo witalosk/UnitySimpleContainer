@@ -10,19 +10,20 @@ namespace UnitySimpleContainer
     public class TransientInstanceProvider : IInstanceProvider
     {
         public bool IsMonoBehaviour { get; } = false;
-        
+
         private readonly Type _type;
-        
+        private Func<object> _factory;
+
         public TransientInstanceProvider(Type type)
         {
             _type = type;
-            
+
             if (_type.IsSubclassOf(typeof(MonoBehaviour)))
             {
                 IsMonoBehaviour = true;
             }
         }
-        
+
         public object GetInstance()
         {
             if (IsMonoBehaviour)
@@ -31,7 +32,8 @@ namespace UnitySimpleContainer
                 return go.AddComponent(_type);
             }
 
-            return Activator.CreateInstance(_type);
+            _factory ??= ReflectionCache.GetFactory(_type);
+            return _factory();
         }
 
         public Component AddComponent(GameObject parent)
@@ -40,7 +42,7 @@ namespace UnitySimpleContainer
             {
                 return parent.AddComponent(_type);
             }
-            
+
             throw new InvalidOperationException("This type is not a MonoBehaviour");
         }
     }

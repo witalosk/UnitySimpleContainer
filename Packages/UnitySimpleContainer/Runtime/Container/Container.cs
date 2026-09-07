@@ -70,13 +70,13 @@ namespace UnitySimpleContainer
 
             if (!nullable)
             {
-                // [Nullable]属性が付いていない場合は警告を出力する
-                Debug.LogAssertion($"\"{type}\" was requested, but there is no corresponding type registered for the container.");
+                // [Nullable]属性が付いていない場合は例外
+                throw new ProviderNotRegisteredException($"\"{type}\" was requested, but there is no corresponding provider registered for the container.");
             }
 
             return GetDefault(type);
         }
-        
+
         /// <summary>
         /// プロバイダを解決する
         /// </summary>
@@ -87,7 +87,7 @@ namespace UnitySimpleContainer
             {
                 throw new InvalidOperationException("Providers of type IEnumerable<> cannot be obtained.");
             }
-            
+
             if (_containerData.TryGetValue(type, out IInstanceProvider value))
             {
                 return value;
@@ -125,7 +125,7 @@ namespace UnitySimpleContainer
         {
             BindProvider(registerType, new TransientInstanceProvider(concreteType));
         }
-        
+
         /// <summary>
         /// 既に存在するインスタンスを登録する
         /// </summary>
@@ -151,7 +151,7 @@ namespace UnitySimpleContainer
             {
                 Debug.LogAssertion($"List-type objects cannot be registered. Wrap the object in an appropriate class before registering it. (Type: {type}) {provider.GetInstance()}");
             }
-            
+
             Type collectionType = typeof(IEnumerable<>).MakeGenericType(type);
             if (_containerData.ContainsKey(type))
             {
